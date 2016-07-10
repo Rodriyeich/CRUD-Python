@@ -15,6 +15,7 @@ Funcionalidades: Crear, Consultar, Editar, Borrar. </property>
     <property name="website_label" translatable="yes">Repositorio</property>
     <property name="authors">José Manuel Rodríguez Rodríguez</property>
     <property name="logo_icon_name">dialog-information</property>
+    <signal name="response" handler="onCloseAbout" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="gridDialogAbout">
         <property name="can_focus">False</property>
@@ -72,7 +73,7 @@ Funcionalidades: Crear, Consultar, Editar, Borrar. </property>
     <property name="can_focus">False</property>
     <property name="border_width">6</property>
     <property name="default_width">600</property>
-    <property name="default_height">400</property>
+    <property name="default_height">430</property>
     <child>
       <object class="GtkBox" id="boxPrincipal">
         <property name="visible">True</property>
@@ -448,6 +449,23 @@ Funcionalidades: Crear, Consultar, Editar, Borrar. </property>
                         <property name="fill">True</property>
                         <property name="padding">5</property>
                         <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="botonAccion">
+                        <property name="label" translatable="yes">Añadir juego</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="margin_top">10</property>
+                        <property name="margin_bottom">10</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
