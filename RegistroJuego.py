@@ -50,7 +50,7 @@ class RegistroJuego:
     def getPlataforma(self):
 		return self.__plataforma__
 
-    def setLanzamiento(self,pPlataforma):
+    def setLanzamiento(self,pLanzamiento):
 		self.__lanzamiento__ = pLanzamiento
 
     def getLanzamiento(self):

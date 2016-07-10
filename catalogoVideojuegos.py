@@ -15,6 +15,7 @@ class Catalogo_GUI:
     entryDesarrolladora = None
     entryPlataforma = None
     entryLanzamiento = None
+    dialogAviso = None
     def __init__(self):
         self.registroJuego = RegistroJuego()
         self.builder = Gtk.Builder()
@@ -22,6 +23,7 @@ class Catalogo_GUI:
         self.handlers = {"onDeleteWindow": Gtk.main_quit,
                             "onAboutActivate": self.onAboutActivate,
                             "onCloseAbout": self.onCloseAbout,
+                            "onBotonDialogCamposVaciosClicked": self.onBotonDialogCamposVaciosClicked,
                             "onBotonAccionClicked": self.onBotonAccionClicked,
                             "onBotonAsignarImagenClicked": self.onBotonAsignarImagenClicked,}
 
@@ -34,13 +36,14 @@ class Catalogo_GUI:
         self.entryDesarrolladora = self.builder.get_object("entryDesarrolladoraDetalles")
         self.entryLanzamiento = self.builder.get_object("entryLanzamientoDetalles")
         self.registroJuego.setCaratula("resources/seleccionar_imagen.jpg")
+        self.dialogAviso = self.builder.get_object("dialogCamposVacios")
 
         #Consultamos numero de tablas que hay en la base de datos
         conexion = sqlite3.connect("juegos.db")
         cursor = conexion.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY Name;")
         tablas = map(lambda t: t[0], cursor.fetchall())
-        print "Numero de tablas " + str(len(tablas))
+        print "Numero de tablas en la base de Datos:" + str(len(tablas))
 
         #Si no hay tablas la creamos
         if len(tablas) == 0:
@@ -63,7 +66,7 @@ class Catalogo_GUI:
     		True -- si detecta cadena vacía o nula
     		False -- si la cadena no está vacía o no es nula
     """
-    def cadenaVacia(cadena):
+    def cadenaVacia(self, cadena):
 
     	if cadena is None:
     		return True
@@ -82,26 +85,26 @@ class Catalogo_GUI:
     		True -- si detecta alguno de los campos vacío o nulo
     		False -- si no detecta campos vacíos o nulos
     """
-    def camposVacios(registro):
+    def camposVacios(self, registro):
     	campoVacio = False
 
     	# Comprobamos que el campo no está vacíó
-    	campoVacio = cadenaVacia(registro.getTitulo())
+    	campoVacio = self.cadenaVacia(registro.getTitulo())
 
     	if not campoVacio:
-    		campoVacio = cadenaVacia(registro.getGenero())
+    		campoVacio = self.cadenaVacia(registro.getGenero())
 
     	if not campoVacio:
-    		campoVacio = cadenaVacia(registro.getDesarrolladora())
+    		campoVacio = self.cadenaVacia(registro.getDesarrolladora())
 
     	if not campoVacio:
-    		campoVacio = cadenaVacia(registro.getPlataforma())
+    		campoVacio = self.cadenaVacia(registro.getPlataforma())
 
     	if not campoVacio:
-    		campoVacio = cadenaVacia(registro.getLanzamiento())
+    		campoVacio = self.cadenaVacia(registro.getLanzamiento())
 
     	if not campoVacio:
-    		campoVacio = cadenaVacia(registro.getCaratula())
+    		campoVacio = self.cadenaVacia(registro.getCaratula())
 
     	return campoVacio
 
@@ -112,6 +115,10 @@ class Catalogo_GUI:
     def onCloseAbout(self, *args):
         self.about = self.builder.get_object("dialogAbout")
         self.about.hide()
+
+    def onBotonDialogCamposVaciosClicked(self, button):
+        print "Cerrando"
+        self.dialogAviso.hide()
 
     def onBotonAsignarImagenClicked(self, button):
         dialog = Gtk.FileChooserDialog("Elige fichero", None,
@@ -173,8 +180,6 @@ class Catalogo_GUI:
         dialog.destroy()
 
     def onBotonAccionClicked(self, button):
-        conexion = sqlite3.connect("juegos.db")
-        cursor = conexion.cursor()
 
         #Actualizamos valores de registro seleccionado
         txt = self.entryTitulo.get_text()
@@ -188,22 +193,29 @@ class Catalogo_GUI:
         txt = self.entryLanzamiento.get_text()
         self.registroJuego.setLanzamiento(txt)
 
-        if button.get_label is "Añadir juego":
-            if not camposVacios(registroJuego):
+        etiquetaBoton = button.get_label()
+        if etiquetaBoton == "Añadir juego":
+
+            if not self.camposVacios(self.registroJuego):
+
+                conexion = sqlite3.connect("juegos.db")
+                cursor = conexion.cursor()
             	#Consultamos los datos para extraer último id de la tabla Victimas
             	cursor.execute("SELECT * FROM Juegos; ")
 
             	#Extraemos longitud de la lista del cursor que coincide con el último id introducido en la tabla
             	ultimoId = len(cursor.fetchall())
-                ulltimoId += 1
+                ultimoId += 1
                 # Realizamos insercion de nuevo registro
-                cursor.execute("INSERT INTO Juegos(id,Titulo,Genero,Desarrolladora, Plataforma, Lanzamiento, Caratula) VALUES (%s, %s, %s, %s, %s, %s, %s);",
-                                (ultimoId, self.registroJuego.getTitulo(), self.registroJuego.getGenero(), self.registroJuego.getDesarrolladora(), self.registroJuego.getPlataforma(), self.registroJuego.getLanzamiento(), self.registroJuego.getCaratula()))
+                #cursor.execute("INSERT INTO Juegos(id,Titulo,Genero,Desarrolladora, Plataforma, Lanzamiento, Caratula) VALUES (%s, %s, %s, %s, %s, %s, %s);",
+                #                (ultimoId, self.registroJuego.getTitulo(), self.registroJuego.getGenero(), self.registroJuego.getDesarrolladora(), self.registroJuego.getPlataforma(), self.registroJuego.getLanzamiento(), self.registroJuego.getCaratula()))
 
             	#Cerramos cursor
             	cursor.close()
             	#Cerramos conexión
             	conexion.close()
+            else:
+                self.dialogAviso.show_all()
 def main():
     window = Catalogo_GUI()
     Gtk.main()
