@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#Author José Manuel Rodriguez Rodriguez, Program Name: Victimas de Conan
+#Author José Manuel Rodriguez Rodriguez, Program Name: Catalogo Videojuegos
 
 
 """
-	Clase: RegistroConan
-	- Define un registro de la tabla: Victimas
-	- Los atributos definen los campos del registro (id, Nombre, Genero, plataforma Lanzamiento, Caratula)
+	Clase: RegistroJuego
+	- Define un registro de la tabla: Juegos
+	- Los atributos definen los campos del registro (id, Titulo, Genero, Plataforma Lanzamiento, Caratula)
 """
 class RegistroJuego:
     #Constructor por defecto
