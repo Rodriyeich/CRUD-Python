@@ -6,7 +6,7 @@
 """
 	Clase: RegistroConan
 	- Define un registro de la tabla: Victimas
-	- Los atributos definen los campos del registro (id, Nombre, Genero, Desarrolladora)
+	- Los atributos definen los campos del registro (id, Nombre, Genero, plataforma Lanzamiento, Caratula)
 """
 class RegistroJuego:
     #Constructor por defecto
@@ -14,16 +14,15 @@ class RegistroJuego:
         self.__id__ = 0
         self.__titulo__ = None
         self.__genero__ = None
-        self.__desarrolladora__ = None
         self.__plataforma__ = None
         self.__lanzamiento__ = None
         self.__caratula__ = None
 
-	#Métodos públicos
-	def getId(self):
+    #Métodos públicos
+    def getId(self):
 		return self.__id__
 
-	def setId(self,pId):
+    def setId(self,pId):
 		self.__id__ = pId
 
     def getTitulo(self):
@@ -37,12 +36,6 @@ class RegistroJuego:
 
     def setGenero(self,pGenero):
 		self.__genero__ = pGenero
-
-    def getDesarrolladora(self):
-		return self.__desarrolladora__
-
-    def setDesarrolladora(self,pDesarrolladora):
-		self.__desarrolladora__ = pDesarrolladora
 
     def setPlataforma(self,pPlataforma):
 		self.__plataforma__ = pPlataforma
