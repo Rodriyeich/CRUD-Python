@@ -197,8 +197,11 @@ Funcionalidades: Crear, Consultar, Editar, Borrar. </property>
   <object class="GtkWindow" id="ventanaPrincipal">
     <property name="can_focus">False</property>
     <property name="border_width">6</property>
+    <property name="resizable">False</property>
     <property name="default_width">900</property>
     <property name="default_height">430</property>
+    <property name="deletable">False</property>
+    <property name="has_resize_grip">False</property>
     <child>
       <object class="GtkBox" id="boxPrincipal">
         <property name="visible">True</property>
@@ -324,6 +327,8 @@ Funcionalidades: Crear, Consultar, Editar, Borrar. </property>
         </child>
         <child>
           <object class="GtkBox" id="box2">
+            <property name="width_request">900</property>
+            <property name="height_request">400</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="homogeneous">True</property>

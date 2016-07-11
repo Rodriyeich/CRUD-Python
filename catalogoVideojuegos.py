@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#Author José Manuel Rodriguez Rodriguez, Program Name: Catalogo Videojuegos
 
 from gi.repository import Gtk
 import os
@@ -8,7 +9,35 @@ import sqlite3
 
 from RegistroJuego import RegistroJuego
 
+"""
+	Clase: Catalogo_GUI
+	- Implementa una aplicacion gráfica para manipular una base de datos de Videojuegos
+    - La aplicación se apoya en otra clase: RegistroJuego que define un registro de la tabla Juegos
+    - Base de datos:
+        -- La base de datos es local: juegos.db El fichero se crea automáticamente si no se detecta en el directorio
+        -- Consta de una tabla Juegos (id, Titulo, Genero, Plataforma, Lanzamiento, Caratula)
+        -- Si la aplicación al arrancar detecta que no hay tablas en la bd crea automáticamente la tabla Juegos
+        -- La base de datos se ha montado con sqlite3
+        -- Consta de plena funcionalidad para manipular los daqtos de la tabla: Insertar, Modificar, Consultar, Borrar.
+    - Funcionalidad:
+        -- Menu de herramientas con tres entradas: Archivos, Catálogo, Ayuda
+        -- Archivo: Salir: opción para cerrar el programa
+        -- Catálogo: Cuatro entredas que dan funcionalidad al programa respecto a la base de datos
+        -- Ayuda: Entrada about con información de la aplicación, autor y versión.
+        -- Desde el panle Detalles, se puede asginar una carátula pinchando sobre "Seleccionar Imagen" o sobre una imagen existente
+        -- Las imágenes deben estar en el directorio 'resources/'
+    - Interfaz Gráfico:
+        -- El interfaz Gráfico se ha motnado con la herramienta: Glade en el fichero: 'catalogoVideojuegos.glade'
+        -- Se divide principalmente en dos partes: una tabla y el panel detalles
+        -- Tabla de datos: Se va actualizando después de realizar alguna operación, por defecto muestra todas las entradas de la tabla
+        -- Con el ratón se puede seleccionar cualquier fila, que se visualizará en la parte derecha de detallles
+        -- Desde el menú de herramientas seleccionando una operación definimos la funcionalidad del botón que hay en la parte inferior
+        -- Una vez definida la operación, seleccionamos en la tabla la fila, la operación se realizará cuando se pulse el botón de acción.
+        -- Desde el menú de herramientas en la opción Buscar, se pueden definir diferentes criterios para relaizar diferentes consultas
+           según el criterio se actualizará y se mostraran las coincidencias en la tabla de datos del interfaz.
+"""
 class Catalogo_GUI:
+    # Variables de instancia
     builder = None
     registroJuego = None
     entryTitulo = None
@@ -31,6 +60,7 @@ class Catalogo_GUI:
     scrollBar = None
     filaSeleccionada = None
 
+    # Constructor
     def __init__(self):
         self.registroJuego = RegistroJuego()
         self.builder = Gtk.Builder()
@@ -134,11 +164,12 @@ class Catalogo_GUI:
 
         self.window = self.builder.get_object("ventanaPrincipal")
         self.window.show_all()
-
+    # Procedimiento para borrar tabla de interfaz
     def borrarTabla(self):
         # Limpiamos la Tabla
         self.store.clear()
 
+    # Limpiamos datos del panel de detalles
     def limpiarDetalles(self):
         etiquetaBoton = self.botonAccion.get_label()
         if etiquetaBoton == "Editar juego" or etiquetaBoton == "Borrar juego":
@@ -151,15 +182,8 @@ class Catalogo_GUI:
         img = self.builder.get_object("imageDetallesCaratula")
         img.set_from_file("resources/seleccionar_imagen.jpg")
         img.show()
-    """
-    	Función que comprueba si una cadena es Nula o Vacía
-    	-Parámetros:
-    		cadena -- cadena de caractéres
 
-    	-Devuelve:
-    		True -- si detecta cadena vacía o nula
-    		False -- si la cadena no está vacía o no es nula
-    """
+    # Función que comprueba si una cadena es nula o vacía
     def cadenaVacia(self, cadena):
 
     	if cadena is None:
@@ -170,15 +194,7 @@ class Catalogo_GUI:
 
     	return False
 
-    """
-    	Función que comprueba si alguno de los campos de un registro es Nulo o Vacío
-    	-Parámetros:
-    		registro -- objeto de tipo RegistroJuego
-
-    	-Devuelve:
-    		True -- si detecta alguno de los campos vacío o nulo
-    		False -- si no detecta campos vacíos o nulos
-    """
+    # Función que comprueba si un campo del registro es nulo o vacío
     def camposVacios(self, registro):
     	campoVacio = False
 
@@ -243,22 +259,27 @@ class Catalogo_GUI:
     def onBorrarActivate(self, submenuCatalogoBorrar):
         self.botonAccion.set_label("Borrar juego")
 
+    # Acción de submenú about
     def onAboutActivate(self, submenuAyudaAbout):
 		self.about = self.builder.get_object("dialogAbout")
 		self.about.show_all()
 
+    # Acción de botón cerrar del dialog about
     def onCloseAbout(self, *args):
         self.about = self.builder.get_object("dialogAbout")
         self.about.hide()
 
+    # Acción del botón cerrar del dialog de Aviso de campos vacíós
     def onBotonDialogCamposVaciosClicked(self, button):
         self.dialogAviso.hide()
 
+    # Define criterio de búsqueda según selecciónde radio button
     def onRadioActivado(self, button):
         if button.get_active():
             #Definimos criterio de búsqueda
             self.criterioBuscar = button.get_label()
 
+    # Acción del buscar de ventana de búsqueda
     def onBotonAccionVentanaBuscarClicked(self, button):
         buscar = self.entryBuscar.get_text()
 
@@ -320,9 +341,11 @@ class Catalogo_GUI:
         else:
             self.dialogAviso.show_all()
 
+    # Acción de botón cerrar de ventana de búsqueda
     def onBotonCerrarVentanaBuscarClicked(self, button):
         self.ventanaBuscar.hide()
 
+    # Acción al pinchar sobre seleccionar imagen o sobre imagen en detalles
     def onBotonAsignarImagenClicked(self, button):
         dialog = Gtk.FileChooserDialog("Elige fichero", None,
                  Gtk.FileChooserAction.OPEN,
@@ -345,9 +368,11 @@ class Catalogo_GUI:
 
         dialog.destroy()
 
-    def onDeleteWindow(self):
-        Gtk.main_quit
+    # Acción de submenu Salir
+    def onDeleteWindow(self, *args):
+        Gtk.main_quit(*args)
 
+    # Añade filtros a la ventana de selección de ficheros
     def add_filters(self, dialog):
         #Definimos el filtro para ficheros de tipo imágen
         filter_img = Gtk.FileFilter()
@@ -361,6 +386,7 @@ class Catalogo_GUI:
         filter_img.add_pattern("*.tif")
         dialog.add_filter(filter_img)
 
+     # Visualiza ventana de selección de imagen
     def on_folder_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Elige carpeta", self,
             Gtk.FileChooserAction.SELECT_FOLDER,
@@ -378,6 +404,7 @@ class Catalogo_GUI:
 
         dialog.destroy()
 
+    # Acción del botón de Acción de panel Detalles
     def onBotonAccionClicked(self, button):
 
         etiquetaBoton = button.get_label()
